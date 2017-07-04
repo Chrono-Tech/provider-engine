@@ -73,15 +73,17 @@ VmSubprovider.prototype.estimateGas = function(payload, end) {
           end(err, undefined);
         }
 
-        //console.log("[runVm callback] used gas: " + ethUtil.bufferToInt(results.gasUsed));
+        var gasUsedBN = (results.vm.gasRefund) ? results.gasUsed.add(results.vm.gasRefund) : results.gasUsed;
 
-        // add 5% extra gas
-        var usedGas = Math.floor(ethUtil.bufferToInt(results.gasUsed) * 1.05);
+        //console.log("[runVm callback] used gas: " + ethUtil.bufferToInt(gasUsedBN));
+
+        // add 10% extra gas
+        var usedGas = Math.floor(ethUtil.bufferToInt(gasUsedBN) * 1.10);
 
 
         var gasEstimateHex = (usedGas < self._blockGasLimit)
                               ? rpcHexEncoding.intToQuantityHex(usedGas)
-                              :rpcHexEncoding.intToQuantityHex(self._blockGasLimit);
+                              : rpcHexEncoding.intToQuantityHex(self._blockGasLimit);
 
         end(null, gasEstimateHex);
     })
